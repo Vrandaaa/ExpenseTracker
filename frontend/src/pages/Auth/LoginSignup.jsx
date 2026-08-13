@@ -20,19 +20,23 @@ const LoginSignup = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { login, isLoggedIn } = useContext(AuthContext);
+  const { login, isLoggedIn ,signup} = useContext(AuthContext);
 
+  //navigate to home page if isLoggedIn value is true.
   useEffect(() => {
     if (isLoggedIn) {
       navigate("/home");
     }
   }, [isLoggedIn]);
+
+  //checking if the entered email is in correct format or not
   const validateEmail = (value) => {
     const regex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
     const result = regex.test(value);
     return result;
   };
 
+  //password must contain 8 charaters and captial,small,digits and special combination
   function validatePassword(val) {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^])[A-Za-z\d@$!%*?&#^]{8,}$/;
     const isCorrectPass = passwordRegex.test(val);
@@ -40,6 +44,7 @@ const LoginSignup = () => {
 
   }
 
+  //passwords and emial should not be empty, then calling the validateEmail and validatePassword functions to check.
   function validateForm() {
     if (!email) {
       toast.error("please enter email.")
@@ -62,37 +67,65 @@ const LoginSignup = () => {
 
   }
 
-  function loginHandler(e) {
-    e.preventDefault();
+  //function for login dealing with password and email only.
+  async function loginHandler(e) {
+    e.preventDefault();// preventing the default behaviour of submit button
     const isValid = validateForm();
+    //if is valid is true navigate to home page with a toast message saying "Login Successfull".
     if (isValid) {
-      login();
-      toast.success("Login Successfull!")
-      setTimeout(() => {
-        navigate("/home");
-      }, 1000);
+      const obj = {
+        email: email,
+        password:password,
+      }
+      const result = await login(obj);// calling the login function in AuthContext and change isLogged in value to true
+      if(result.success){
+        toast.success("Login Successfull!")
+        setTimeout(() => {
+          navigate("/home");
+        }, 1000);
+      }
+      else{
+        toast.error(result.message);
+      }
+      
+    }
+    else{
+      return
     }
   }
 
-  function signupHandler(e) {
-    e.preventDefault();
-    if (!name.trim()) {
-      toast.error("Please enter name");
+  async function signupHandler(e) {
+    e.preventDefault();//prevent default behaviour of submit button
+    if (!name.trim()) {//remove extra white spaces from name 
+      toast.error("Please enter name");//if name empty send toast of error
       return;
     }
-    const isValid = validateForm();
-    if (!isValid) return;
-    if (password !== confirmPassword) {
+    if (password !== confirmPassword) {//checking if both password and confirmed password are same or not
       toast.error("Password do not match.")
       return;
     }
+    const isValid = validateForm();
+    if (isValid){
+      const obj = {
+        email:email,
+        password:password,
+        name:name,
+      }
+      console.log("Sending this to signup API -> ",obj);
+      const result = await signup(obj);
+      if(result.success){
+        toast.success("SignUp Successfull!")//every everything works fine a toast for successfull signup
+        setIsLogin(true);
+        toast.info("Please Login.");
+      }
+      else{
+        toast.error(result.message);
+      }
+    }
+    else{
+      return;
+    }
 
-    toast.success("SignUp Successfull!")
-
-    setTimeout(() => {
-      login();
-      navigate("/home");
-    }, 1000);
 
   }
   return (

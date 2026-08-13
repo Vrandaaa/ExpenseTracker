@@ -17,6 +17,7 @@ import IncomeExpenseBarChart from '../../components/charts/IncomeExpenseBarChart
 const Home = () => {
   const [showForm, setShowForm] = useState(false)
   const { transactions } = useContext(TransactionContext);
+  
   function addTransactionHandler() {
     setShowForm(prev => !prev)
   }

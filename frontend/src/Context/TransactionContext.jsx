@@ -37,8 +37,7 @@ export default function TransactionContextProvider({ children }) {
                 "transactions",
                 JSON.stringify(transactions)
             );
-        }
-        catch (error) {
+        }catch (error) {
             console.log("Error loading transactions", error);
             return [];
         }

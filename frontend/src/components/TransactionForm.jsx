@@ -72,11 +72,7 @@ const TransactionForm = ({ fixedType = "" }) => {
     function handleChange(event) {
         setFormData(prev => ({
             ...prev,
-            [event.target.name]:
-                event.target.name === 'amount'
-                    ? Number(event.target.value)
-                    : event.target.value
-
+            [event.target.name]: event.target.name === 'amount' ? Number(event.target.value): event.target.value
         }));
     }
 
@@ -110,10 +106,8 @@ const TransactionForm = ({ fixedType = "" }) => {
                     date: ""
                 });
                 setEmoji(null);
-            }
-
-            catch {
-                toast.error("there is some error sorry");
+            }catch {
+                toast.error("There is some error sorry");
                 console.log(formData);
             }
 
