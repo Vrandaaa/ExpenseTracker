@@ -4,11 +4,15 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './pages/Dashboard/Home'
 import Expense from './pages/Dashboard/Expense.jsx'
 import Income from './pages/Dashboard/Income.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
+// import ProtectedRoute from './components/ProtectedRoute.jsx'
+import ProtectedRoute from './routes/ProtectedRoute.jsx'
+import PublicRoute from './routes/PublicRoute.jsx'
 const App = () => {
   return (
     <Routes>
-      <Route path='/' element={<div><LoginSignup /></div>}></Route>
+      <Route element={<PublicRoute />}>
+        <Route path='/' element={<div><LoginSignup /></div>}></Route>
+      </Route>
       {/* ProtectedRoute */}
       <Route element={<ProtectedRoute />}>
         <Route path='/home' element={<div><Home /></div>}></Route>

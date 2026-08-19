@@ -1,18 +1,17 @@
 const UserData = require("../models/UserData");
-const userData = require("../models/UserData");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv");
 
 const signUpHandler = async (req, res) => {
-    const { email, password , name } = req.body;
+    const { email, password, name } = req.body || {};
     if (!email || !password || !name) {
         return res.status(400).json({
             success: false,
             message: "please fill the details."
         })
     }
-    const userExists = await userData.findOne({ email });
+    const userExists = await UserData.findOne({ email });
     if (userExists) {
         return res.status(400).json({
             success: false,
@@ -30,8 +29,8 @@ const signUpHandler = async (req, res) => {
         })
     }
 
-    const user = await userData.create({
-        name:name, email: email, password: hashedPassword
+    const user = await UserData.create({
+        name: name, email: email, password: hashedPassword
     })
     return res.status(200).json({
         success: true,
@@ -40,8 +39,7 @@ const signUpHandler = async (req, res) => {
 }
 
 const loginHandler = async (req, res) => {
-    console.log("LOGIN CONTROLLER HIT");
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
     if (!email || !password) {
         return res.status(400).json({
             success: false,
@@ -69,14 +67,29 @@ const loginHandler = async (req, res) => {
             }
         );
 
-        user = user.toObject();
+        // user = user.toObject();
         user.password = undefined;
-        user.token = token;
-        return res.status(200).json({
+        // user.token = token;
+
+        const options = {
+            maxAge: 3 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+        };
+
+
+        //storing token inside cookie.
+        return res.cookie("token", token, options).status(200).json({
             success: true,
+            message: "login successfull!!",
             user: user,
-            message: "login Successfull."
         })
+
+        // return res.status(200).json({
+        //     success: true,
+        //     user: user,
+        //     message: "login Successfull."
+        // })
     }
     return res.status(400).json({
         success: false,
@@ -85,4 +98,23 @@ const loginHandler = async (req, res) => {
     })
 }
 
-module.exports = { signUpHandler, loginHandler };
+const logoutHandler = (req, res) => {
+    const token = req.cookies.token;
+    if (token) {
+        res.clearCookie("token");
+        return res.status(200).json({
+            success: true,
+            message: "Logged out successfully"
+        });
+    }
+    else{
+        return res.status(200).json({
+            success: false,
+            message: "Problem in loggin you out!"
+        });
+    }
+}
+
+
+
+module.exports = { signUpHandler, loginHandler , logoutHandler};

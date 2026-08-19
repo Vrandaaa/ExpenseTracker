@@ -20,14 +20,8 @@ const LoginSignup = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { login, isLoggedIn ,signup} = useContext(AuthContext);
+  const { login, signup } = useContext(AuthContext);
 
-  //navigate to home page if isLoggedIn value is true.
-  useEffect(() => {
-    if (isLoggedIn) {
-      navigate("/home");
-    }
-  }, [isLoggedIn]);
 
   //checking if the entered email is in correct format or not
   const validateEmail = (value) => {
@@ -75,21 +69,21 @@ const LoginSignup = () => {
     if (isValid) {
       const obj = {
         email: email,
-        password:password,
+        password: password,
       }
       const result = await login(obj);// calling the login function in AuthContext and change isLogged in value to true
-      if(result.success){
+      if (result.success) {
         toast.success("Login Successfull!")
         setTimeout(() => {
           navigate("/home");
         }, 1000);
       }
-      else{
+      else {
         toast.error(result.message);
       }
-      
+
     }
-    else{
+    else {
       return
     }
   }
@@ -105,24 +99,24 @@ const LoginSignup = () => {
       return;
     }
     const isValid = validateForm();
-    if (isValid){
+    if (isValid) {
       const obj = {
-        email:email,
-        password:password,
-        name:name,
+        email: email,
+        password: password,
+        name: name,
       }
-      console.log("Sending this to signup API -> ",obj);
+      console.log("Sending this to signup API -> ", obj);
       const result = await signup(obj);
-      if(result.success){
-        toast.success("SignUp Successfull!")//every everything works fine a toast for successfull signup
+      if (result.success) {
+        toast.success("SignUp Successfull!")// everything works fine a toast for successfull signup
         setIsLogin(true);
         toast.info("Please Login.");
       }
-      else{
+      else {
         toast.error(result.message);
       }
     }
-    else{
+    else {
       return;
     }
 

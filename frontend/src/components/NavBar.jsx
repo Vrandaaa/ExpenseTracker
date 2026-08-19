@@ -4,7 +4,8 @@ import './NavBar.css'
 import { FaBars, FaEdit, FaHome, FaWallet, FaMoneyBillWave } from "react-icons/fa";
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {AuthContext} from '../Context/AuthContext';
+import { toast, ToastContainer } from 'react-toastify'
+import { AuthContext } from '../Context/AuthContext';
 const NavBar = () => {
     const navigate = useNavigate();
     const [showNavBar, setNavBar] = useState(true);
@@ -68,10 +69,27 @@ const NavBar = () => {
                     </li>
                 </ul>
             </div>
-            <div className='logout'><button onClick={() => {
-                logout();
-                navigate("/");
+            <div className='logout'><button onClick={async() => {
+                const result = await logout();
+                if (result.success) {
+                    setTimeout(() => {
+                        toast.success("Logout Successfully!");
+                        navigate("/"); 
+                    }, 1000)
+                }
+                else {
+                    toast.error(result.message);
+                }
             }}>LogOut</button></div>
+            <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                theme="light"
+            />
         </div>
     )
 }
